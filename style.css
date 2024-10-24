@@ -33,7 +33,7 @@ header h1 {
 
 .search {
   background-color: transparent;
-  border: 2px solid var(--primary-color);
+  border: 3px solid whitesmoke;
   border-radius: 50px;
   font-family: inherit;
   font-size: 1rem;
@@ -42,7 +42,7 @@ header h1 {
 }
 
 .search::placeholder {
-  color: #7378c5;
+  color: #fff;
 }
 
 .search:focus {
@@ -132,4 +132,8 @@ main {
   header h1 {
     padding: 0.5rem 1rem;
   }
+}
+
+.trailer-btn{
+  padding: 5%;
 }
