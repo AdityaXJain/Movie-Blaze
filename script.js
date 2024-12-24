@@ -7,6 +7,7 @@ const YOUTUBE_SEARCH_URL = "https://www.youtube.com/results?search_query=";
 const main = document.getElementById("main");
 const form = document.getElementById("form");
 const search = document.getElementById("search");
+const suggestionsList = document.getElementById("suggestions");
 
 const getClassByRate = (vote) => {
   if (vote >= 7.5) return "green";
@@ -16,16 +17,10 @@ const getClassByRate = (vote) => {
 
 const showMovies = (movies) => {
   main.innerHTML = "";
-  movies.forEach(async (movie) => {
-    const { title, poster_path, vote_average, overview, id, release_date } = movie;
+  movies.forEach((movie) => {
+    const { title, poster_path, vote_average, overview } = movie;
     const movieElement = document.createElement("div");
     movieElement.classList.add("movie");
-
-    // Fetch additional movie details (e.g., streaming platforms, trailer)
-    const movieDetails = await getMovieDetails(id);
-    const trailerUrl = YOUTUBE_SEARCH_URL + encodeURIComponent(`${title} trailer`);
-    const ottLinks = movieDetails.providers.map(provider => 
-      `<p>${provider.link} ${provider.name}</p>`).join(" ");
 
     movieElement.innerHTML = `
     <img
@@ -39,24 +34,10 @@ const showMovies = (movies) => {
     <div class="overview">
       <h3>Overview</h3>
       ${overview}
-      <p><strong>Release Year:</strong> ${release_date.split("-")[0]}</p>
-      <p><strong>Available on:</strong> ${ottLinks || "Not Available"}</p>
-      <button class="trailer-btn" onclick="window.open('${trailerUrl}', '_blank')">Watch Trailer</button>
     </div>
   `;
     main.appendChild(movieElement);
   });
-};
-
-// Fetch movie details including OTT providers and trailer info
-const getMovieDetails = async (movieId) => {
-  const res = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&append_to_response=watch/providers`);
-  const data = await res.json();
-  const providers = (data['watch/providers'].results?.IN?.flatrate || []).map(provider => ({
-    name: provider.provider_name,
-    link: provider.provider_link || "#"
-  }));
-  return { providers };
 };
 
 const getMovies = async (url) => {
@@ -65,7 +46,31 @@ const getMovies = async (url) => {
   showMovies(data.results);
 };
 
-getMovies(API_URL);
+const displaySuggestions = (movies) => {
+  suggestionsList.innerHTML = "";
+  movies.slice(0, 5).forEach((movie) => {
+    const suggestionItem = document.createElement("li");
+    suggestionItem.textContent = movie.title;
+    suggestionItem.addEventListener("click", () => {
+      search.value = movie.title; // Autofill search input
+      suggestionsList.innerHTML = ""; // Clear suggestions
+      getMovies(SEARCH_API + movie.title); // Fetch movie details
+    });
+    suggestionsList.appendChild(suggestionItem);
+  });
+};
+
+search.addEventListener("input", async (e) => {
+  const query = e.target.value.trim();
+
+  if (query.length > 2) {
+    const res = await fetch(SEARCH_API + query);
+    const data = await res.json();
+    displaySuggestions(data.results);
+  } else {
+    suggestionsList.innerHTML = ""; // Clear suggestions
+  }
+});
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -73,7 +78,8 @@ form.addEventListener("submit", (e) => {
   if (searchTerm && searchTerm !== "") {
     getMovies(SEARCH_API + searchTerm);
     search.value = "";
-  } else {
-    history.go(0);
+    suggestionsList.innerHTML = ""; // Clear suggestions
   }
 });
+
+getMovies(API_URL);

@@ -1,4 +1,3 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400&display=swap");
 
 :root {
@@ -19,7 +18,7 @@ body {
 header {
   padding: 1rem;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   background-color: var(--secondary-color);
 }
@@ -28,25 +27,46 @@ header h1 {
   color: #eee;
   padding: 0;
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
 }
 
 .search {
-  background-color: transparent;
-  border: 3px solid whitesmoke;
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: 2px solid whitesmoke;
   border-radius: 50px;
-  font-family: inherit;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
   color: #fff;
+  background-color: var(--primary-color);
 }
 
-.search::placeholder {
-  color: #fff;
+.suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  width: 100%;
+  background-color: var(--secondary-color);
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
-.search:focus {
-  outline: none;
+.suggestions li {
+  padding: 10px;
+  cursor: pointer;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.suggestions li:hover {
   background-color: var(--primary-color);
 }
 
@@ -132,8 +152,4 @@ main {
   header h1 {
     padding: 0.5rem 1rem;
   }
-}
-
-.trailer-btn{
-  padding: 5%;
 }
