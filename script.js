@@ -3,10 +3,14 @@ const API_URL = `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.
 const IMG_PATH = "https://image.tmdb.org/t/p/w1280";
 const SEARCH_API = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=`;
 const YOUTUBE_SEARCH_URL = "https://www.youtube.com/results?search_query=";
+const POPULAR_API = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&page=1`;
+const TOP_RATED_API = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&page=1`;
+const UPCOMING_API = `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&page=1`;
 
 const main = document.getElementById("main");
 const form = document.getElementById("form");
 const search = document.getElementById("search");
+const navLinks = document.querySelectorAll('.nav-link');
 
 const showLoading = () => {
   main.innerHTML = '<div class="loading">Loading...</div>';
@@ -125,4 +129,36 @@ form.addEventListener("submit", (e) => {
       getMovies(API_URL);
     }
   }, 300);
+});
+
+const handleSectionClick = (e) => {
+  e.preventDefault();
+  const section = e.target.dataset.section;
+  
+  // Remove active class from all links
+  navLinks.forEach(link => link.classList.remove('active'));
+  // Add active class to clicked link
+  e.target.classList.add('active');
+  
+  // Determine which API URL to use
+  let apiUrl;
+  switch(section) {
+    case 'popular':
+      apiUrl = POPULAR_API;
+      break;
+    case 'top-rated':
+      apiUrl = TOP_RATED_API;
+      break;
+    case 'upcoming':
+      apiUrl = UPCOMING_API;
+      break;
+    default:
+      apiUrl = API_URL;
+  }
+  
+  getMovies(apiUrl);
+};
+
+navLinks.forEach(link => {
+  link.addEventListener('click', handleSectionClick);
 });
